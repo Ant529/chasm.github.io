@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>深渊之底 · ABYSS OF THE DEEP | GOBA</title>
+<meta name="description" content="深渊之底（Abyss of the Deep）——3 章 18 段的像素地牢动作 RPG，GOBA 出品。">
+<style>
+/* ================= 深渊之底 · 开始界面 =================
+   版式照 2026-11-20 的概念图：
+     外黑框 → 顶栏（GOBA）→ 下方内容区 → 右侧三颗实体键（第一颗绿=开始）
+   配色直接取概念图：底 #969696 / 黑框 #000 / 绿面 #338504
+                    绿亮 #4FD800 / 绿暗 #255E03 / 灰亮 #C5BFBF / 灰暗 #424141
+   立体感只用 inset 硬阴影（0 模糊），禁圆角、禁渐变 —— 和游戏里 HWUI 同一套口径 */
+:root{
+  --ink:#000;
+  --panel:#969696;
+  --panel-2:#a8a8a8;
+  --lt:#C5BFBF;
+  --dk:#424141;
+  --green:#338504;
+  --green-lt:#4FD800;
+  --green-dk:#255E03;
+  --page:#0e0d12;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  background:var(--page);
+  color:#000;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"PingFang SC","Microsoft YaHei",monospace;
+  -webkit-font-smoothing:none;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+}
+img{display:block;}
+
+/* ---------- 外框 ---------- */
+.frame{
+  width:100%;max-width:1040px;
+  background:var(--panel);
+  border:10px solid var(--ink);
+  outline:10px solid #2a2a2a;
+  outline-offset:-20px;
+  display:flex;flex-direction:column;
+  min-height:min(92vh,880px);
+}
+
+/* ---------- 顶栏：GOBA ---------- */
+.topbar{
+  display:flex;align-items:center;gap:16px;
+  padding:14px 22px;
+  border-bottom:9px solid var(--ink);
+  background:var(--panel);
+}
+.topbar img{height:26px;width:auto;image-rendering:pixelated;}
+.topbar .tag{
+  margin-left:auto;font-size:11px;font-weight:900;letter-spacing:3px;
+  text-transform:uppercase;
+}
+.topbar .dot{
+  width:10px;height:10px;background:var(--green);border:2px solid var(--ink);
+  margin-right:-4px;
+}
+
+/* ---------- 内容区 ---------- */
+.body{
+  flex:1;display:grid;
+  grid-template-columns:1fr 296px;
+  gap:34px;
+  padding:26px;
+  align-items:center;
+}
+
+/* 封面 + 名字 */
+.stage{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;}
+/* ★ 海报是「图 + 名牌」一竖条，宽度跟封面走。
+   上一版没包这一层：flex 列会把 .coverbox 压扁（flex-shrink 默认 1），
+   图比框高就溢出到外框外面，还压住名牌。 */
+.poster{display:flex;flex-direction:column;align-items:stretch;width:fit-content;max-width:100%;}
+.coverbox{
+  flex:none;
+  border:6px solid var(--ink);
+  background:#000;
+  line-height:0;
+  overflow:hidden;
+}
+/* ★ 只给 max-height / max-width，宽高 auto，比例才不会塌 */
+.coverbox img{
+  height:auto;width:auto;
+  max-height:52vh;max-width:100%;
+  image-rendering:pixelated;
+}
+.titleplate{
+  flex:none;
+  margin-top:-6px;
+  border:6px solid var(--ink);
+  background:#000;
+  color:#fff;
+  padding:12px 14px 11px;
+  text-align:center;
+}
+.titleplate .zh{
+  font-size:clamp(20px,3.4vw,30px);
+  font-weight:900;letter-spacing:.42em;
+  text-indent:.42em;
+  color:#F0E6FF;
+}
+.titleplate .en{
+  margin-top:5px;
+  font-size:10px;font-weight:900;letter-spacing:3.2px;
+  color:#8A7AB0;
+}
+
+/* ---------- 右侧三颗键 ---------- */
+.menu{display:flex;flex-direction:column;gap:18px;width:100%;}
+.gbtn{
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  border:6px solid var(--ink);
+  background:var(--panel-2);
+  color:#000;
+  font:900 18px/1 inherit;
+  letter-spacing:.34em;text-indent:.34em;
+  padding:20px 8px;
+  cursor:pointer;
+  user-select:none;
+  box-shadow:inset 5px 5px 0 var(--lt), inset -5px -5px 0 var(--dk);
+  transition:none;
+}
+.gbtn:hover{background:#b6b6b6;}
+.gbtn:active,.gbtn.pressed{
+  box-shadow:inset -5px -5px 0 var(--lt), inset 5px 5px 0 var(--dk);
+  transform:translateY(2px);
+}
+.gbtn.primary{
+  background:var(--green);color:#EAFFE0;
+  box-shadow:inset 5px 5px 0 var(--green-lt), inset -5px -5px 0 var(--green-dk);
+}
+.gbtn.primary:hover{background:#3a9a05;}
+.gbtn.primary:active{
+  box-shadow:inset -5px -5px 0 var(--green-lt), inset 5px 5px 0 var(--green-dk);
+}
+.gbtn .sub{
+  position:absolute;right:12px;bottom:6px;
+  font-size:8px;font-weight:900;letter-spacing:1.4px;opacity:.55;
+}
+
+/* 底部提示条 */
+.footbar{
+  border-top:9px solid var(--ink);
+  padding:9px 22px;
+  display:flex;gap:18px;align-items:center;
+  font-size:10px;font-weight:900;letter-spacing:2px;
+}
+.footbar .k{background:#000;color:#C5BFBF;padding:2px 6px;}
+.footbar .r{margin-left:auto;opacity:.65;}
+
+/* ---------- 说明 / 关于 弹层 ---------- */
+.modal{
+  position:fixed;inset:0;z-index:99;
+  display:none;align-items:center;justify-content:center;
+  padding:18px;background:rgba(0,0,0,.86);
+}
+.modal.on{display:flex;}
+.card{
+  width:100%;max-width:520px;max-height:86vh;overflow:auto;
+  background:#16121E;
+  border:4px solid #000;
+  box-shadow:inset 3px 3px 0 10px #6A5D81, inset -3px -3px 0 10px #30293C, inset 0 0 0 10px #473C5A;
+  padding:22px 20px 18px;
+  color:#C1C1C1;
+}
+.card h2{
+  font-size:14px;letter-spacing:.38em;text-indent:.38em;color:#C1C1C1;
+  text-align:center;margin-bottom:14px;text-shadow:2px 2px 0 #000;
+}
+.card dl{display:grid;grid-template-columns:88px 1fr;gap:8px 12px;font-size:12px;line-height:1.6;}
+.card dt{color:#8F86A6;font-weight:900;}
+.card dd{color:#C1C1C1;}
+.card p{font-size:12px;line-height:1.85;color:#C1C1C1;}
+.card p + p{margin-top:10px;}
+.card .x{
+  margin:16px auto 0;display:block;
+  border:3px solid #000;background:#A5A5A5;color:#16121E;
+  font:900 13px/1 inherit;letter-spacing:.3em;text-indent:.3em;
+  padding:11px 26px;cursor:pointer;
+  box-shadow:inset 3px 3px 0 #C1C1C1, inset -3px -3px 0 #656565;
+}
+.card .x:active{box-shadow:inset -3px -3px 0 #C1C1C1, inset 3px 3px 0 #656565;}
+
+/* ---------- 窄屏：竖着排 ---------- */
+@media (max-width:760px){
+  body{padding:8px;}
+  .frame{border-width:7px;outline-width:7px;outline-offset:-14px;min-height:0;}
+  .topbar{padding:11px 14px;border-bottom-width:7px;gap:10px;}
+  .topbar img{height:20px;}
+  .topbar .tag{font-size:9px;letter-spacing:1.6px;}
+  .body{grid-template-columns:1fr;gap:18px;padding:14px;}
+  .coverbox img{max-height:32vh;}
+  .titleplate{padding:9px 14px;}
+  .gbtn{font-size:15px;padding:16px 6px;border-width:5px;
+        box-shadow:inset 4px 4px 0 var(--lt), inset -4px -4px 0 var(--dk);}
+  .gbtn.primary{box-shadow:inset 4px 4px 0 var(--green-lt), inset -4px -4px 0 var(--green-dk);}
+  .menu{gap:12px;}
+  .footbar{padding:8px 14px;font-size:9px;gap:10px;border-top-width:7px;}
+  .footbar .r{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="frame">
+
+  <!-- 顶栏：GOBA -->
+  <div class="topbar">
+    <img src="assets/img/goba-dark.png" alt="GOBAgame">
+    <span class="dot"></span>
+    <span class="tag">PIXEL DUNGEON · HTML5</span>
+  </div>
+
+  <!-- 内容：封面 + 三颗键 -->
+  <div class="body">
+    <div class="stage">
+      <div class="poster">
+        <div class="coverbox"><img src="cover.png" alt="深渊之底 封面"></div>
+        <div class="titleplate">
+          <div class="zh">深渊之底</div>
+          <div class="en">ABYSS OF THE DEEP</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu">
+      <button class="gbtn primary" id="btnStart">开 始 游 戏<span class="sub">ENTER</span></button>
+      <button class="gbtn" id="btnHelp">操 作 说 明</button>
+      <button class="gbtn" id="btnAbout">关 于 本 作</button>
+    </div>
+  </div>
+
+  <!-- 底部提示 -->
+  <div class="footbar">
+    <span><span class="k">↑↓←→</span> 移动 / 撞怪即攻击</span>
+    <span><span class="k">空格</span> 等待一回合</span>
+    <span class="r">3 章 · 18 段 · 符文解谜 · 服饰收集</span>
+  </div>
+
+</div>
+
+<!-- 操作说明 -->
+<div class="modal" id="mHelp">
+  <div class="card">
+    <h2>操 作 说 明</h2>
+    <dl>
+      <dt>移动</dt><dd>方向键 / WASD；手机用左下方向盘</dd>
+      <dt>攻击</dt><dd>朝怪物所在方向走一步即攻击</dd>
+      <dt>等待</dt><dd>空格（原地一回合，回能量）</dd>
+      <dt>技能</dt><dd>1 – 6 释放；手机点右下技能键，长按可拖方向</dd>
+      <dt>武器</dt><dd>Q / E 切换</dd>
+      <dt>背包</dt><dd>B 打开；服饰页可穿上 / 脱下</dd>
+      <dt>存读档</dt><dd>K 存档 · L 读档</dd>
+      <dt>设置</dt><dd>ESC；手机点右上 ☰</dd>
+      <dt>解谜</dt><dd>踩亮本段全部符文，符文门才会消失</dd>
+    </dl>
+    <button class="x" data-close>关 闭</button>
+  </div>
+</div>
+
+<!-- 关于 -->
+<div class="modal" id="mAbout">
+  <div class="card">
+    <h2>关 于 本 作</h2>
+    <p><b>深渊之底 / ABYSS OF THE DEEP</b><br>一款单文件 HTML5 像素地牢动作 RPG。3 章共 18 段，每段一张独立大图：一条主廊、四间大厅、两间岔路小屋，过段必须解开符文门。</p>
+    <p>主角有新绘立绘与 16 件可收集服饰（头 / 身 / 披三槽，各自带攻防加成）。打破木桶与宝箱，掉落物会落在脚边，走过去才算捡到。</p>
+    <p>怪物素材、墙地素材、封面均由作者手绘；特效全部为像素硬边，不使用半透明雾化。</p>
+    <button class="x" data-close>关 闭</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  /* game.html?start=1 —— 跳过游戏自己的标题页直接进局（带参数才生效） */
+  var GAME = 'game.html?start=1';
+
+  /* 存档键跟游戏内一致：Goba.save 用 'goba_' 前缀包了一层 localStorage。
+     同源所以这里读得到；读不到就当没有存档。 */
+  function hasSave() {
+    try {
+      var raw = localStorage.getItem('goba_depths_v3');
+      if (!raw) return false;
+      var d = JSON.parse(raw);
+      return !!(d && d.v === 3);
+    } catch (e) { return false; }
+  }
+
+  function start() { location.href = GAME; }
+
+  var bStart = document.getElementById('btnStart');
+  /* 有存档就把绿键改成「继续冒险」，别让人以为要重开一局 */
+  if (hasSave()) {
+    bStart.childNodes[0].nodeValue = '继 续 冒 险';
+    bStart.classList.add('cont');
+  }
+  bStart.addEventListener('click', start);
+
+  var modal = function (id, on) {
+    document.getElementById(id).classList.toggle('on', on);
+  };
+  document.getElementById('btnHelp').addEventListener('click', function () { modal('mHelp', true); });
+  document.getElementById('btnAbout').addEventListener('click', function () { modal('mAbout', true); });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-close]'), function (b) {
+    b.addEventListener('click', function () {
+      b.closest('.modal').classList.remove('on');
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.modal'), function (m) {
+    m.addEventListener('click', function (e) { if (e.target === m) m.classList.remove('on'); });
+  });
+
+  /* 键盘：回车开始，ESC 关弹层 */
+  window.addEventListener('keydown', function (e) {
+    var open = document.querySelector('.modal.on');
+    if (e.key === 'Escape' && open) { open.classList.remove('on'); return; }
+    if ((e.key === 'Enter' || e.key === ' ') && !open) { e.preventDefault(); start(); }
+  });
+
+  /* 触屏按下态：:active 在部分移动浏览器上不稳，补一份 class 版 */
+  Array.prototype.forEach.call(document.querySelectorAll('.gbtn'), function (b) {
+    b.addEventListener('touchstart', function () { b.classList.add('pressed'); }, { passive: true });
+    b.addEventListener('touchend', function () { b.classList.remove('pressed'); }, { passive: true });
+  });
+})();
+</script>
+</body>
+</html>

@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>深渊之底 · ABYSS OF THE DEEP | GOBA</title>
 <meta name="description" content="深渊之底（Abyss of the Deep）——3 章 18 段的像素地牢动作 RPG，GOBA 出品。">
+<!-- PWA：iOS「添加到主屏幕」要这三行 + manifest，不然只是个带浏览器边框的书签 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b0b12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="深渊之底">
+<link rel="apple-touch-icon" href="assets/img/icon-180.png">
 <style>
 /* ================= 深渊之底 · 开始界面 =================
    版式照 2026-11-20 的概念图：
@@ -77,7 +84,7 @@ img{display:block;}
 /* ★ 海报是「图 + 名牌」一竖条，宽度跟封面走。
    上一版没包这一层：flex 列会把 .coverbox 压扁（flex-shrink 默认 1），
    图比框高就溢出到外框外面，还压住名牌。 */
-.poster{display:flex;flex-direction:column;align-items:stretch;width:fit-content;max-width:100%;}
+.poster{display:flex;flex-direction:column;align-items:stretch;width:100%;max-width:560px;}
 .coverbox{
   flex:none;
   border:6px solid var(--ink);
@@ -86,9 +93,12 @@ img{display:block;}
   overflow:hidden;
 }
 /* ★ 只给 max-height / max-width，宽高 auto，比例才不会塌 */
+/* ★ 封面从竖图换成横图（280×201）后，按原尺寸摆只剩 280 宽，
+   在大屏上有一大片空灰。改成按宽度铺到 560（正好 2 倍，像素还是整块）。 */
 .coverbox img{
-  height:auto;width:auto;
-  max-height:52vh;max-width:100%;
+  display:block;
+  width:min(100%,560px);height:auto;
+  max-height:none;max-width:100%;
   image-rendering:pixelated;
 }
 .titleplate{
@@ -129,6 +139,28 @@ img{display:block;}
   transition:none;
 }
 .gbtn:hover{background:#b6b6b6;}
+/* ---------- 下载区：三个平台入口，跟灰键同一套立体硬边 ---------- */
+.dlbox{
+  border:6px solid var(--ink);
+  background:var(--panel);
+  box-shadow:inset 4px 4px 0 #AFAFAF, inset -4px -4px 0 #7D7D7D;
+  padding:10px 12px 8px;
+}
+.dlrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.dlbtn{
+  display:flex;align-items:center;justify-content:center;
+  border:4px solid var(--ink);
+  background:var(--panel-2);color:#000;
+  font:900 12px/1 inherit;letter-spacing:.14em;text-indent:.14em;
+  padding:12px 4px;text-decoration:none;cursor:pointer;
+  box-shadow:inset 3px 3px 0 var(--lt), inset -3px -3px 0 var(--dk);
+}
+.dlbtn:hover{background:#b6b6b6;}
+.dlbtn:active{box-shadow:inset -3px -3px 0 var(--lt), inset 3px 3px 0 var(--dk);transform:translateY(1px);}
+.dlnote{
+  margin-top:7px;font-size:9px;font-weight:900;letter-spacing:.6px;
+  color:#2b2b2b;opacity:.72;text-align:center;
+}
 .gbtn:active,.gbtn.pressed{
   box-shadow:inset -5px -5px 0 var(--lt), inset 5px 5px 0 var(--dk);
   transform:translateY(2px);
@@ -235,14 +267,15 @@ img{display:block;}
       <button class="gbtn primary" id="btnStart">开 始 游 戏<span class="sub">ENTER</span></button>
       <button class="gbtn" id="btnHelp">操 作 说 明</button>
       <button class="gbtn" id="btnAbout">关 于 本 作</button>
+      <button class="gbtn" id="btnDl">下 载 游 戏</button>
     </div>
   </div>
 
   <!-- 底部提示 -->
   <div class="footbar">
     <span><span class="k">↑↓←→</span> 移动 / 撞怪即攻击</span>
-    <span><span class="k">空格</span> 等待一回合</span>
-    <span class="r">3 章 · 18 段 · 符文解谜 · 服饰收集</span>
+    <span><span class="k">1 – 6</span> 释放技能</span>
+    <span class="r">3 章 · 18 段 · 符文解谜 · 服饰收集 · <b>BUILD 1121</b></span>
   </div>
 
 </div>
@@ -252,9 +285,10 @@ img{display:block;}
   <div class="card">
     <h2>操 作 说 明</h2>
     <dl>
+      <dt>开始</dt><dd>主页绿键 → 进游戏<b>主菜单</b>（新建 / 继续 / 设置都在里面）</dd>
       <dt>移动</dt><dd>方向键 / WASD；手机用左下方向盘</dd>
       <dt>攻击</dt><dd>朝怪物所在方向走一步即攻击</dd>
-      <dt>等待</dt><dd>空格（原地一回合，回能量）</dd>
+      <dt>确认</dt><dd>空格（对话 / 弹窗里推进、死后原地重开）</dd>
       <dt>技能</dt><dd>1 – 6 释放；手机点右下技能键，长按可拖方向</dd>
       <dt>武器</dt><dd>Q / E 切换</dd>
       <dt>背包</dt><dd>B 打开；服饰页可穿上 / 脱下</dd>
@@ -271,16 +305,67 @@ img{display:block;}
   <div class="card">
     <h2>关 于 本 作</h2>
     <p><b>深渊之底 / ABYSS OF THE DEEP</b><br>一款单文件 HTML5 像素地牢动作 RPG。3 章共 18 段，每段一张独立大图：一条主廊、四间大厅、两间岔路小屋，过段必须解开符文门。</p>
-    <p>主角有新绘立绘与 16 件可收集服饰（头 / 身 / 披三槽，各自带攻防加成）。打破木桶与宝箱，掉落物会落在脚边，走过去才算捡到。</p>
+    <p>主角沿用像素图集里的原始小人，另有 16 件可收集服饰（头 / 身 / 披三槽，各自带攻防加成）。打破木桶与宝箱，掉落物会落在脚边，走过去才算捡到。</p>
+    <p><b>下载游戏</b>拿到的就是单文件 HTML：存到本地后双击、用浏览器打开即可游玩，<b>不联网也能跑</b>，存档存在浏览器本地。</p>
+    <p>分两个版本：<b>WINDOWS</b> 是横屏版（640×360，WASD / 方向键移动，1 – 6 放技能，技能自动锁敌，没有触屏按键）；<b>ANDROID</b> 是竖屏触屏版（左下方向盘 + 右下技能键）。两版同一个游戏本体，存档互不相通。</p>
     <p>怪物素材、墙地素材、封面均由作者手绘；特效全部为像素硬边，不使用半透明雾化。</p>
+    <button class="x" data-close>关 闭</button>
+  </div>
+</div>
+
+<!-- 下载：三个平台入口。都是一个文件、不是压缩包。
+     都是 HTML5 单文件 —— 没有 exe / apk / ipa 的打包链，这点在下面对话说清楚。 -->
+<div class="modal" id="mDl">
+  <div class="card">
+    <h2>下 载 游 戏</h2>
+    <p>三个格子拿到的是<b>同一个游戏</b>的两个版本，都是<b>单文件 HTML</b>：不是压缩包，也不是 exe / apk。存到本地双击、或者拖进浏览器就能玩，<b>不联网也能跑</b>，存档在浏览器本地。</p>
+    <div class="dlbox">
+      <div class="dlrow">
+        <a class="dlbtn" id="dlWin" href="game-pc.html"
+           download="深渊之底-PC横屏版.html">WINDOWS</a>
+        <a class="dlbtn" id="dlAndroid" href="game.html"
+           download="深渊之底-手机版.html">ANDROID</a>
+        <button class="dlbtn" id="dlIos" type="button">IOS</button>
+      </div>
+      <div class="dlnote">单文件 HTML · 存下来双击 / 用浏览器打开就玩</div>
+    </div>
+    <p><b>WINDOWS</b>：横屏 640×360，WASD / 方向键移动、1–6 放技能，技能自动锁敌，没有触屏按键。<br>
+       <b>ANDROID</b>：竖屏触屏版，左下方向盘 + 右下技能键。<br>
+       <b>IOS</b>：苹果不允许网页装 .ipa，用「添加到主屏幕」，见下一层说明。</p>
+    <button class="x" data-close>关 闭</button>
+  </div>
+</div>
+
+<!-- iOS 说明 -->
+<div class="modal" id="mIos">
+  <div class="card">
+    <h2>IOS 安 装</h2>
+    <p>iOS 不允许从网页直接装应用包（.ipa 只能在 App Store 或 TestFlight 分发），所以这里用苹果官方的「添加到主屏幕」——效果一样是一个独立图标、全屏运行、离线也能开。</p>
+    <p><b>1</b> 用 <b>Safari</b> 打开本页（微信 / 其他浏览器里不行）<br>
+       <b>2</b> 点底部中间的「分享」按钮<br>
+       <b>3</b> 往下找到「添加到主屏幕」，命名后确认<br>
+       <b>4</b> 回主屏点新图标即可开始</p>
+    <p>想先在电脑上试一试：点 WINDOWS 那一格，下载下来的是一个单文件 HTML，双击就能玩。</p>
     <button class="x" data-close>关 闭</button>
   </div>
 </div>
 
 <script>
 (function () {
-  /* game.html?start=1 —— 跳过游戏自己的标题页直接进局（带参数才生效） */
-  var GAME = 'game.html?start=1';
+  /* 这个页面只是「介绍 + 入口」。开始游戏不带任何参数 → 进游戏自己的主菜单
+     （新建 / 继续 / 设置都在那儿，别在这儿替玩家做决定）。
+     早先的 `?start=1`（跳过游戏内标题页直接开局）保留在游戏侧，需要时仍可直接用。 */
+  /* 电脑/手机分流：桌面没有触屏控件，进横屏版才玩得动（键盘 + 技能自动锁敌）；
+     手机进竖屏触屏版。两版同一个游戏本体，见 game-pc.html 的 __PCMODE 开关。 */
+  var IS_MOBILE = (function () {
+    var ua = navigator.userAgent || '';
+    if (/iPhone|iPad|iPod|Android|Mobile/i.test(ua)) return true;
+    /* iPadOS 13+ 的 UA 伪装成 Mac —— 靠触点数和触摸能力补判 */
+    if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;
+    try { if (window.matchMedia('(pointer: coarse)').matches && navigator.maxTouchPoints > 0) return true; } catch (e) {}
+    return false;
+  })();
+  var GAME = IS_MOBILE ? 'game.html' : 'game-pc.html';
 
   /* 存档键跟游戏内一致：Goba.save 用 'goba_' 前缀包了一层 localStorage。
      同源所以这里读得到；读不到就当没有存档。 */
@@ -308,6 +393,8 @@ img{display:block;}
   };
   document.getElementById('btnHelp').addEventListener('click', function () { modal('mHelp', true); });
   document.getElementById('btnAbout').addEventListener('click', function () { modal('mAbout', true); });
+  document.getElementById('btnDl').addEventListener('click', function () { modal('mDl', true); });
+  document.getElementById('dlIos').addEventListener('click', function () { modal('mIos', true); });
 
   Array.prototype.forEach.call(document.querySelectorAll('[data-close]'), function (b) {
     b.addEventListener('click', function () {
@@ -318,10 +405,13 @@ img{display:block;}
     m.addEventListener('click', function (e) { if (e.target === m) m.classList.remove('on'); });
   });
 
-  /* 键盘：回车开始，ESC 关弹层 */
+  /* 键盘：回车开始，ESC 关弹层。
+     ★ 下载层里还能再开 iOS 说明（两层叠着），ESC 要关最上面那层。 */
   window.addEventListener('keydown', function (e) {
-    var open = document.querySelector('.modal.on');
+    var all = document.querySelectorAll('.modal.on');
+    var open = all.length ? all[all.length - 1] : null;
     if (e.key === 'Escape' && open) { open.classList.remove('on'); return; }
+    if (e.key === 'Escape') return;
     if ((e.key === 'Enter' || e.key === ' ') && !open) { e.preventDefault(); start(); }
   });
 
@@ -330,6 +420,14 @@ img{display:block;}
     b.addEventListener('touchstart', function () { b.classList.add('pressed'); }, { passive: true });
     b.addEventListener('touchend', function () { b.classList.remove('pressed'); }, { passive: true });
   });
+
+  /* 离线兜底：装上 Service Worker 后，主屏图标断网也能开。
+     只有 https / localhost 注册得上，file:// 双击打开时静默跳过（不影响玩）。 */
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () { });
+    });
+  }
 })();
 </script>
 </body>

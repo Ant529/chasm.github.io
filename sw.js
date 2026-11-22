@@ -3,10 +3,10 @@
      · 页面导航：network-first + `cache: 'no-cache'`（回源带 ETag 校验，
        没变就是 304、变了立刻拿到新的），断网/超时才回缓存
      · 其它静态资源：stale-while-revalidate（先用缓存秒开，后台拉新的覆盖回去）
-   缓存名带构建戳 `1122-1803-510a68` —— 每次构建都是新名字，activate 一定清掉上一版。
+   缓存名带构建戳 `1122-1837-a59991` —— 每次构建都是新名字，activate 一定清掉上一版。
    注意：只有 https 或 localhost 才会注册成功；file:// 双击打开时 SW 不生效，
         但游戏本身是单文件自包含的，不需要 SW 也能玩。 */
-var V = 'abyss-1122-1803-510a68';
+var V = 'abyss-1122-1837-a59991';
 var PRE = ['./', './index.html', './game.html', './game-pc.html', './cover.png',
            './manifest.json', './assets/img/goba-dark.png',
            './assets/img/icon-180.png', './assets/img/icon-192.png',
